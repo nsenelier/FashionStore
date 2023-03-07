@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "582051953786",
+    "project_id": "fashionstore-618da",
+    "storage_bucket": "fashionstore-618da.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:582051953786:android:23f56bd4abc1e023ae8fc3",
+        "android_client_info": {
+          "package_name": "com.cyberwalker.fashionstore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "582051953786-l54dnviielvv9l68d7luqpo1fbv9ko03.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsBNe85-r4L-PcRn7hX5pHFwMVtNTTzFM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "582051953786-l54dnviielvv9l68d7luqpo1fbv9ko03.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

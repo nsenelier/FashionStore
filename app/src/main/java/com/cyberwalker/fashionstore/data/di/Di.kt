@@ -17,15 +17,33 @@ package com.cyberwalker.fashionstore.data.di
 
 import com.cyberwalker.fashionstore.data.HomeRepository
 import com.cyberwalker.fashionstore.data.source.HomeRemoteSource
+import com.cyberwalker.fashionstore.repository.AuthRepository
+import com.cyberwalker.fashionstore.repository.AuthRepositoryImpl
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object Di {
-
+    @Provides
+    @Singleton
     fun getHomeRemoteSource() = HomeRemoteSource()
 
+    @Provides
+    @Singleton
     fun getHomeRepository(source: HomeRemoteSource) = HomeRepository(source)
+
+    @Provides
+    @Singleton
+    fun providesFirebaseAuth() = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun providesRepositoryImpl(firebaseAuth: FirebaseAuth): AuthRepository {
+        return AuthRepositoryImpl(firebaseAuth)
+    }
 }

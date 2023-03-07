@@ -332,7 +332,6 @@ private fun GridOfImages(onAction: (actions: HomeScreenActions) -> Unit,) {
     }
 }
 
-
 sealed class HomeScreenActions {
     object Details : HomeScreenActions()
 }

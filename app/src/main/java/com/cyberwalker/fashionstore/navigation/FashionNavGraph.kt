@@ -28,6 +28,10 @@ import com.cyberwalker.fashionstore.detail.DetailScreenActions
 import com.cyberwalker.fashionstore.dump.animatedComposable
 import com.cyberwalker.fashionstore.home.HomeScreen
 import com.cyberwalker.fashionstore.home.HomeScreenActions
+import com.cyberwalker.fashionstore.login.LoginScreen
+import com.cyberwalker.fashionstore.login.LoginScreenActions
+import com.cyberwalker.fashionstore.signup.SignupScreen
+import com.cyberwalker.fashionstore.signup.SignupScreenActions
 import com.cyberwalker.fashionstore.splash.SplashScreen
 import com.cyberwalker.fashionstore.splash.SplashScreenActions
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -37,6 +41,8 @@ sealed class Screen(val name: String, val route: String) {
     object Splash : Screen("splash", "splash")
     object Home : Screen("home", "home")
     object Detail : Screen("detail", "detail")
+    object Login : Screen("login", "login")
+    object Signup: Screen("signup", "signup")
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -54,15 +60,20 @@ fun FashionNavGraph(
         modifier = modifier
     ) {
         animatedComposable(Screen.Splash.route) {
-            SplashScreen(onAction = actions::navigateToHome)
+            SplashScreen(onAction = actions::navigateToLogin)
         }
-
         animatedComposable(Screen.Home.route) {
             HomeScreen(onAction = actions::navigateFromHome,navController = navController)
         }
-
         animatedComposable(Screen.Detail.route) {
             DetailScreen(onAction = actions::navigateFromDetails)
+        }
+        //The back navigation should be to splash
+        animatedComposable(Screen.Login.route) {
+            LoginScreen(onAction = actions::navigateToHome, navController = navController)
+        }
+        animatedComposable(Screen.Signup.route) {
+            SignupScreen(onAction = actions::navigateFromSignup, navController = navController)
         }
     }
 }
@@ -75,12 +86,31 @@ class NavActions(private val navController: NavController) {
             }
         }
     }
+    fun navigateToLogin(_A: SplashScreenActions) {
+        navController.navigate(Screen.Login.name) {
+            popUpTo(Screen.Splash.route){
+                inclusive = true
+            }
+        }
+    }
 
     fun navigateFromHome(actions: HomeScreenActions) {
         when (actions) {
             HomeScreenActions.Details -> {
                 navController.navigate(Screen.Detail.name)
             }
+        }
+    }
+    fun navigateFromLogin(actions: LoginScreenActions){
+        when(actions){
+            LoginScreenActions.Home ->
+                navController.navigate(Screen.Home.name)
+        }
+    }
+    fun navigateFromSignup(actions: SignupScreenActions){
+        when(actions){
+            SignupScreenActions.Login ->
+            navController.navigate(Screen.Login.name)
         }
     }
 
