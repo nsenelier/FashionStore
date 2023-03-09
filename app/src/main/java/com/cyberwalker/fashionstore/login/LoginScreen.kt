@@ -33,7 +33,13 @@ import com.cyberwalker.fashionstore.ui.theme.AppTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.initialize
 import kotlinx.coroutines.launch
 
 @Composable
@@ -76,13 +82,13 @@ fun LoginScreenContent(
             }
         }
 
+
     if (loginState.isLoginSuccessful) {
         /**
          * Navigate to Authenticated navigation route
          * once login is successful
          */
         LaunchedEffect(key1 = true) {
-            //onNavigateToAuthenticatedRoute.invoke()
             navController.navigate(Screen.Home.route)
        }
     } else {

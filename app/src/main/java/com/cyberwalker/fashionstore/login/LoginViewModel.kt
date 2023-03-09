@@ -145,7 +145,6 @@ class LoginViewModel @Inject constructor(
         firebaseAuth.signOut()
     }
 
-
     //auto logout when loaded
     init {
         firebaseAuth.signOut()
