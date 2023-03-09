@@ -27,7 +27,6 @@ fun enterTransition() =
         animationSpec = tween(300)
     ) + fadeIn(animationSpec = tween(300))
 
-
 fun exitTransition() =
     slideOutHorizontally(
         targetOffsetX = { -300 },
@@ -39,7 +38,6 @@ fun popEnterTransition() =
         initialOffsetX = { -300 },
         animationSpec = tween(300)
     ) + fadeIn(animationSpec = tween(300))
-
 
 fun popExitTransition() =
     slideOutHorizontally(

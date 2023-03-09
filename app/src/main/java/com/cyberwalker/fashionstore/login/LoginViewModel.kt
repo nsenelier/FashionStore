@@ -1,11 +1,13 @@
 package com.cyberwalker.fashionstore.login
 
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cyberwalker.fashionstore.login.state.*
 import com.cyberwalker.fashionstore.repository.AuthRepository
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,6 +19,8 @@ class LoginViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ): ViewModel() {
     var loginState = mutableStateOf(LoginState())
+        private set
+    var googleState = mutableStateOf(GoogleSignInState())
         private set
 
     fun onUiEvent(loginUiEvent: LoginUiEvent) {
@@ -116,6 +120,24 @@ class LoginViewModel @Inject constructor(
 
                 }
             }
+        }
+    }
+
+    fun googleSignIn(credential: AuthCredential) = viewModelScope.launch {
+        repository.googleSignIn(credential).collect{result ->
+            when(result){
+                is Resource.Success -> {
+                    googleState.value = GoogleSignInState(success = result.data)
+                    LoginScreenActions.Home
+                }
+                is Resource.Loading -> {
+                    googleState.value = GoogleSignInState(loading = true)
+                }
+                is Resource.Error -> {
+                    googleState.value = GoogleSignInState(error = result.message.toString())
+                }
+            }
+
         }
     }
 

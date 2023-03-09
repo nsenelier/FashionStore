@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">FashionStore</string>
 
+    <string name="empty_string" />
+
+    <string name="navigate_back">Navigate to the previous screen</string>
+
     <!--Login-->
     <string name="login_heading_text">Login</string>
     <string name="login_email_id_or_phone_label">Email ID or Mobile Number</string>

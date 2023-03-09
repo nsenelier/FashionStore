@@ -1,69 +1,90 @@
 package com.cyberwalker.fashionstore.login
 
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.*
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.cyberwalker.fashionstore.R
 import com.cyberwalker.fashionstore.dump.BottomNav
 import com.cyberwalker.fashionstore.login.common.TitleText
 import com.cyberwalker.fashionstore.login.state.LoginUiEvent
 import com.cyberwalker.fashionstore.navigation.Screen
 import com.cyberwalker.fashionstore.splash.SplashScreenActions
 import com.cyberwalker.fashionstore.ui.theme.AppTheme
-
-//@Composable
-//fun LoginScreen(
-//    loginViewModel: LoginViewModel = hiltViewModel(),
-//    scaffoldState: ScaffoldState = rememberScaffoldState(),
-//    onAction: (actions: LoginScreenActions) -> Unit,
-//    navController: NavHostController
-//){
-//    Scaffold(
-//        scaffoldState = scaffoldState,
-//        bottomBar = {
-//            BottomNav(navController = navController)
-//        }
-//    ) { innerPadding ->
-//        LoginScreenContent(modifier = Modifier.padding(innerPadding), onAction = onAction)
-//    }
-//}
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
-    onAction: (actions: SplashScreenActions) -> Unit,
     scaffoldState: ScaffoldState = rememberScaffoldState(),
+    onAction: (actions: SplashScreenActions) -> Unit,
     navController: NavHostController
-//    onNavigateToRegistration: () -> Unit,
-//    onNavigateToForgotPassword: () -> Unit,
- //   onNavigateToAuthenticatedRoute: () -> Unit
-) {
+){
+    Scaffold(
+        scaffoldState = scaffoldState,
+    ) { innerPadding ->
+        LoginScreenContent(modifier = Modifier.padding(innerPadding), onAction = onAction,
+            navController = navController)
+    }
+}
 
+@Composable
+fun LoginScreenContent(
+    loginViewModel: LoginViewModel = hiltViewModel(),
+    onAction: (actions: SplashScreenActions) -> Unit,
+    modifier: Modifier,
+    navController: NavHostController
+
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val loginState by remember { loginViewModel.loginState }
+    val googleSignInState by remember { loginViewModel.googleState }
+
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()){
+            val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            try {
+                val result = account.getResult(ApiException::class.java)
+                val credentials = GoogleAuthProvider.getCredential(result.idToken, null)
+                loginViewModel.googleSignIn(credentials)
+            } catch (it: ApiException) {
+                Log.d("Google Launcher", "Error: ${it.message}")
+            }
+        }
 
     if (loginState.isLoginSuccessful) {
         /**
          * Navigate to Authenticated navigation route
          * once login is successful
          */
-        navController.navigate(Screen.Home.route)
-//        LaunchedEffect(key1 = true) {
-//            onNavigateToAuthenticatedRoute.invoke()
-//        }
+        LaunchedEffect(key1 = true) {
+            //onNavigateToAuthenticatedRoute.invoke()
+            navController.navigate(Screen.Home.route)
+       }
     } else {
         // Full Screen Content
         Column(
@@ -121,7 +142,7 @@ fun LoginScreen(
 
             // Register Section
             Row(
-                modifier = androidx.compose.ui.Modifier.padding(AppTheme.dimens.paddingNormal),
+                modifier = Modifier.padding(AppTheme.dimens.paddingNormal),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -139,6 +160,43 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
+
+            //Google Sign-In
+            Text(text = "Sign-in with Google", fontWeight = FontWeight.Medium, color = Color.Black)
+            Row(
+                modifier = Modifier.padding(AppTheme.dimens.paddingNormal),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                IconButton(onClick = {
+                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .requestIdToken(Constants.ServerClient)
+                        .build()
+
+                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+
+                    launcher.launch(googleSignInClient.signInIntent)
+
+
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_google),
+                        contentDescription = "Google Icon",
+                        modifier = Modifier.size(50.dp),
+                        tint = Color.Unspecified
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(20.dp))
+            LaunchedEffect(key1 = googleSignInState.success){
+                scope.launch {
+                    if (googleSignInState.success != null) {
+                        Toast.makeText(context, "Google Sign-in Success", Toast.LENGTH_LONG).show()
+                        navController.navigate(Screen.Home.route)
+                    }
+                }
+            }
         }
 
     }
@@ -148,12 +206,7 @@ sealed class LoginScreenActions {
     object Home : LoginScreenActions()
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun PreviewLoginScreen() {
-//        LoginScreen(
-//            onNavigateToForgotPassword = {},
-//            onNavigateToRegistration = {},
-//            onNavigateToAuthenticatedRoute = {}
-//        )
-//}
+object Constants{
+    const val ServerClient = " 582051953786-uftmt06mg48gisu412s6t0ec2afi8m8g.apps.googleusercontent.com "
+}
+

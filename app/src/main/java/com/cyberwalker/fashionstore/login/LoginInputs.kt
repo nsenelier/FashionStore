@@ -24,7 +24,7 @@ fun LoginInputs(
     loginState: LoginState,
     onEmailOrMobileChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onSubmit: () -> Unit,
+    onSubmit: () -> Unit
     //onForgotPasswordClick: (() -> Unit)?
 ) {
 
@@ -42,7 +42,6 @@ fun LoginInputs(
             isError = loginState.errorState.emailOrMobileErrorState.hasError,
             errorText = stringResource(id = loginState.errorState.emailOrMobileErrorState.errorMessageStringResource)
         )
-
 
         // Password
         PasswordTextField(

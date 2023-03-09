@@ -14,8 +14,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
-class SignupViewModel@Inject constructor(
+class SignupViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val firebaseAuth: FirebaseAuth
     ): ViewModel() {
@@ -113,7 +114,9 @@ class SignupViewModel@Inject constructor(
                     // TODO Trigger signup in authentication flow
                     val emailString = signupState.value.emailId.trim()
                     val passwordString = signupState.value.password.trim()
+
                     registerUser(emailString, passwordString)
+                    signupState.value = signupState.value.copy(isSignupSuccessful = true)
                 }
             }
         }

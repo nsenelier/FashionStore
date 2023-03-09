@@ -3,12 +3,14 @@ package com.cyberwalker.fashionstore.signup
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ScaffoldState
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.getValue
@@ -20,39 +22,36 @@ import com.cyberwalker.fashionstore.navigation.Screen
 import com.cyberwalker.fashionstore.signup.state.SignupUiEvent
 import com.cyberwalker.fashionstore.ui.theme.AppTheme
 
-//@Composable
-//fun SignupScreen(
-//    signupViewModel: SignupViewModel = hiltViewModel(),
-//    scaffoldState: ScaffoldState = rememberScaffoldState(),
-//    onAction: (actions: SignupScreenActions) -> Unit,
-//    navController: NavHostController
-//){
-//    Scaffold(
-//        scaffoldState = scaffoldState,
-//        bottomBar = {
-//            BottomNav(navController = navController)
-//        }
-//    ) { innerPadding ->
-//        SignupScreenContent(modifier = Modifier.padding(innerPadding), onAction = onAction)
-//    }
-//}
-
 @Composable
 fun SignupScreen(
     signupViewModel: SignupViewModel = hiltViewModel(),
-    onAction: (actions: SignupScreenActions) -> Unit,
     scaffoldState: ScaffoldState = rememberScaffoldState(),
+    onAction: (actions: SignupScreenActions) -> Unit,
     navController: NavHostController
-    //onNavigateBack: () -> Unit,
-    //onNavigateToAuthenticatedRoute: () -> Unit
+){
+    Scaffold(
+        scaffoldState = scaffoldState,
+    ) { innerPadding ->
+        SignupScreenContent(modifier = Modifier.padding(innerPadding), onAction = onAction,
+            navController = navController)
+    }
+}
+
+@Composable
+fun SignupScreenContent(
+    signupViewModel: SignupViewModel = hiltViewModel(),
+    onAction: (actions: SignupScreenActions) -> Unit,
+    modifier: Modifier,
+    navController: NavHostController
 ) {
 
     val signupState by remember { signupViewModel.signupState }
 
     if (signupState.isSignupSuccessful) {
-//        LaunchedEffect(key1 = true) {
-//            onNavigateToAuthenticatedRoute.invoke()
-//        }
+        LaunchedEffect(key1 = true) {
+            //onNavigateToAuthenticatedRoute.invoke()
+            navController.navigate(Screen.Login.route)
+        }
     } else {
         // Full Screen Content
         Column(

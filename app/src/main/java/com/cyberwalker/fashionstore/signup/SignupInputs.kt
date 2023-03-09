@@ -80,7 +80,7 @@ fun SignupInputs(
             imeAction = ImeAction.Done
         )
 
-        // signup Submit Button
+        // Signup Submit Button
         NormalButton(
             modifier = Modifier.padding(top = AppTheme.dimens.paddingExtraLarge),
             text = stringResource(id = R.string.signup_button_text),

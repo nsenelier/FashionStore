@@ -30,6 +30,9 @@ import com.cyberwalker.fashionstore.home.HomeScreen
 import com.cyberwalker.fashionstore.home.HomeScreenActions
 import com.cyberwalker.fashionstore.login.LoginScreen
 import com.cyberwalker.fashionstore.login.LoginScreenActions
+import com.cyberwalker.fashionstore.presentation.liked.LikedScreen
+import com.cyberwalker.fashionstore.presentation.profile.ProfileScreen
+import com.cyberwalker.fashionstore.presentation.search.SearchScreen
 import com.cyberwalker.fashionstore.signup.SignupScreen
 import com.cyberwalker.fashionstore.signup.SignupScreenActions
 import com.cyberwalker.fashionstore.splash.SplashScreen
@@ -40,6 +43,9 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 sealed class Screen(val name: String, val route: String) {
     object Splash : Screen("splash", "splash")
     object Home : Screen("home", "home")
+    object Liked: Screen("liked","liked")
+    object Profile: Screen("profile","profile")
+    object Search: Screen("search","search")
     object Detail : Screen("detail", "detail")
     object Login : Screen("login", "login")
     object Signup: Screen("signup", "signup")
@@ -64,6 +70,15 @@ fun FashionNavGraph(
         }
         animatedComposable(Screen.Home.route) {
             HomeScreen(onAction = actions::navigateFromHome,navController = navController)
+        }
+        animatedComposable(Screen.Liked.route) {
+            LikedScreen(navController = navController)
+        }
+        animatedComposable(Screen.Profile.route) {
+            ProfileScreen(navController = navController)
+        }
+        animatedComposable(Screen.Search.route) {
+            SearchScreen(navController = navController)
         }
         animatedComposable(Screen.Detail.route) {
             DetailScreen(onAction = actions::navigateFromDetails)
@@ -93,7 +108,6 @@ class NavActions(private val navController: NavController) {
             }
         }
     }
-
     fun navigateFromHome(actions: HomeScreenActions) {
         when (actions) {
             HomeScreenActions.Details -> {
@@ -101,6 +115,7 @@ class NavActions(private val navController: NavController) {
             }
         }
     }
+
     fun navigateFromLogin(actions: LoginScreenActions){
         when(actions){
             LoginScreenActions.Home ->
@@ -113,7 +128,6 @@ class NavActions(private val navController: NavController) {
             navController.navigate(Screen.Login.name)
         }
     }
-
     fun navigateFromDetails(actions: DetailScreenActions) {
         when(actions) {
             DetailScreenActions.Back -> navController.popBackStack()
